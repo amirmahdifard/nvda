@@ -1,4 +1,4 @@
-# NVDA
+# NVDAs
 
 NVDA (NonVisual Desktop Access) is a free, open source screen reader for Microsoft Windows.
 It is developed by NV Access in collaboration with a global community of contributors.
