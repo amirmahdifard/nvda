@@ -125,8 +125,8 @@ class AddonDetails(
 		self.contents.Add(wx.StaticLine(self.contentsPanel), flag=wx.EXPAND)
 		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
 
-		self.actionsButton = wx.Button(self.contentsPanel, label=self._actionsLabelText)
-		self.contents.Add(self.actionsButton)
+		self.actionsButton = wx.Button(self, label=self._actionsLabelText)
+		selfSizer.Add(self.actionsButton, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM, border=guiHelper.BORDER_FOR_DIALOGS)
 		self.actionsButton.Bind(
 			event=wx.EVT_BUTTON,
 			handler=lambda e: self._actionsContextMenu.popupContextMenuFromPosition(
@@ -135,8 +135,6 @@ class AddonDetails(
 			),
 		)
 
-		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
-		self.contents.Add(wx.StaticLine(self.contentsPanel), flag=wx.EXPAND)
 		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
 
 		self.otherDetailsLabel = wx.StaticText(
@@ -213,6 +211,7 @@ class AddonDetails(
 			# SetDefaultStyle, however, this means the text control must start empty.
 			self.otherDetailsTextCtrl.SetValue("")
 			if numSelectedAddons > 1:
+				self.actionsButton.Show()
 				self.contentsPanel.Hide()
 				self.updateAddonName(
 					npgettext(
@@ -225,12 +224,14 @@ class AddonDetails(
 					).format(num=numSelectedAddons),
 				)
 			elif not details:
+				self.actionsButton.Hide()
 				self.contentsPanel.Hide()
 				if self._detailsVM._listVM._isLoading:
 					self.updateAddonName(AddonDetails._loadingAddonsLabelText)
 				else:
 					self.updateAddonName(AddonDetails._noAddonSelectedLabelText)
 			else:
+				self.actionsButton.Show()
 				self.updateAddonName(details.displayName)
 				self.descriptionLabel.SetLabelText(AddonDetails._descriptionLabelText)
 				# For a ExpandoTextCtr, SetDefaultStyle can not be used to set the style (along with the use
