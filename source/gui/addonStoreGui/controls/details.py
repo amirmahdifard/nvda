@@ -213,6 +213,7 @@ class AddonDetails(
 			# SetDefaultStyle, however, this means the text control must start empty.
 			self.otherDetailsTextCtrl.SetValue("")
 			if numSelectedAddons > 1:
+				self.contentsPanel.Show()
 				self.actionsButton.Show()
 				self.descriptionLabel.Hide()
 				self.descriptionTextCtrl.Hide()
@@ -229,6 +230,7 @@ class AddonDetails(
 					).format(num=numSelectedAddons),
 				)
 			elif not details:
+				self.contentsPanel.Hide()
 				self.actionsButton.Hide()
 				self.descriptionLabel.Hide()
 				self.descriptionTextCtrl.Hide()
@@ -398,6 +400,7 @@ class AddonDetails(
 							details.scanResults.scanUrl,
 						)
 
+				self.contentsPanel.Show()
 				self.actionsButton.Show()
 				self.descriptionLabel.Show()
 				self.descriptionTextCtrl.Show()
