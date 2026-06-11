@@ -129,8 +129,9 @@ class AddonDetails(
 		self.contents.Add(self.actionsButton)
 		self.actionsButton.Bind(
 			event=wx.EVT_BUTTON,
-			handler=lambda e: self.Parent.addonListView._popupContextMenuFromList(
-				wx.ContextMenuEvent(wx.EVT_CONTEXT_MENU, self.actionsButton.GetId())
+			handler=lambda e: self.Parent.addonListView._contextMenu.popupContextMenuFromPosition(
+				self,
+				self.actionsButton.Position,
 			),
 		)
 
