@@ -125,16 +125,17 @@ class AddonDetails(
 		self.contents.Add(wx.StaticLine(self.contentsPanel), flag=wx.EXPAND)
 		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
 
-		self.actionsButton = wx.Button(self, label=self._actionsLabelText)
-		selfSizer.Add(self.actionsButton, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM, border=guiHelper.BORDER_FOR_DIALOGS)
+		self.actionsButton = wx.Button(self.contentsPanel, label=self._actionsLabelText)
+		self.contents.Add(self.actionsButton)
 		self.actionsButton.Bind(
 			event=wx.EVT_BUTTON,
-			handler=lambda e: self._actionsContextMenu.popupContextMenuFromPosition(
-				self,
-				self.actionsButton.Position,
+			handler=lambda e: self.Parent.addonListView._popupContextMenuFromList(
+				wx.ContextMenuEvent(wx.EVT_CONTEXT_MENU, self.actionsButton.GetId())
 			),
 		)
 
+		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
+		self.contents.Add(wx.StaticLine(self.contentsPanel), flag=wx.EXPAND)
 		self.contents.AddSpacer(guiHelper.SPACE_BETWEEN_VERTICAL_DIALOG_ITEMS)
 
 		self.otherDetailsLabel = wx.StaticText(
@@ -212,7 +213,10 @@ class AddonDetails(
 			self.otherDetailsTextCtrl.SetValue("")
 			if numSelectedAddons > 1:
 				self.actionsButton.Show()
-				self.contentsPanel.Hide()
+				self.descriptionLabel.Hide()
+				self.descriptionTextCtrl.Hide()
+				self.otherDetailsLabel.Hide()
+				self.otherDetailsTextCtrl.Hide()
 				self.updateAddonName(
 					npgettext(
 						"addonStore",
@@ -225,13 +229,15 @@ class AddonDetails(
 				)
 			elif not details:
 				self.actionsButton.Hide()
-				self.contentsPanel.Hide()
+				self.descriptionLabel.Hide()
+				self.descriptionTextCtrl.Hide()
+				self.otherDetailsLabel.Hide()
+				self.otherDetailsTextCtrl.Hide()
 				if self._detailsVM._listVM._isLoading:
 					self.updateAddonName(AddonDetails._loadingAddonsLabelText)
 				else:
 					self.updateAddonName(AddonDetails._noAddonSelectedLabelText)
 			else:
-				self.actionsButton.Show()
 				self.updateAddonName(details.displayName)
 				self.descriptionLabel.SetLabelText(AddonDetails._descriptionLabelText)
 				# For a ExpandoTextCtr, SetDefaultStyle can not be used to set the style (along with the use
@@ -391,7 +397,11 @@ class AddonDetails(
 							details.scanResults.scanUrl,
 						)
 
-				self.contentsPanel.Show()
+				self.actionsButton.Show()
+				self.descriptionLabel.Show()
+				self.descriptionTextCtrl.Show()
+				self.otherDetailsLabel.Show()
+				self.otherDetailsTextCtrl.Show()
 
 		self.Layout()
 		# Set caret/insertion point at the beginning so that NVDA users can more easily read from the start.
