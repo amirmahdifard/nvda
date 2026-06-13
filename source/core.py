@@ -358,6 +358,8 @@ def resetConfiguration(factoryDefaults=False):
 
 	log.debug("terminating addon dataManager")
 	dataManager.terminate()
+	if factoryDefaults and dataManager.addonDataManager is not None:
+		dataManager.addonDataManager.storeSettings.reset()
 	log.debug("Reloading config")
 	config.conf.reset(factoryDefaults=factoryDefaults)
 	logHandler.setLogLevelFromConfig()
