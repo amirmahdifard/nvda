@@ -136,7 +136,9 @@ class _AddonStoreSettings:
 		"""Reset settings to factory defaults."""
 		self._showWarning = True
 		self._addonSettings = {}
-		self.save()
+		if os.path.exists(self._storeSettingsFile):
+			os.remove(self._storeSettingsFile)
+
 
 	@property
 	def showWarning(self) -> bool:
