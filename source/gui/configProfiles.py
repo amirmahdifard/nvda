@@ -53,6 +53,7 @@ class ProfilesDialog(
 		)
 		self.bindHelpEvent("ProfilesBasicManagement", self.profileList)
 		item.Bind(wx.EVT_LISTBOX, self.onProfileListChoice)
+		self.profileList.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu)
 		item.Selection = self.profileNames.index(config.conf.profiles[-1].name)
 		changeProfilesSizer.Add(item, proportion=1)
 
@@ -165,6 +166,30 @@ class ProfilesDialog(
 		except KeyError:
 			return False
 		return profile.manual
+
+	def onContextMenu(self, evt):
+		menu = wx.Menu()
+		# Translators: Context menu item label to add new profile
+		newItem = menu.Append(wx.ID_ANY, _("&New"))
+		# Translators: Context menu item label to open triggers dialog
+		triggersItem = menu.Append(wx.ID_ANY, _("&Triggers..."))
+		self.Bind(wx.EVT_MENU, self.onNew, newItem)
+		self.Bind(wx.EVT_MENU, self.onTriggers, triggersItem)
+		sel = self.profileList.Selection
+		if sel > 0:
+			name = self.profileNames[sel]
+			# Translators: Context menu item label to manual activate or deactivate a profile
+			label = _("Manual deactivate") if self.isProfileManual(name) else _("Manual activate")
+			stateItem = menu.Append(wx.ID_ANY, label)
+			# Translators: Context menu item label to rename a profile
+			renameItem = menu.Append(wx.ID_ANY, _("&Rename"))
+			# Translators: Context menu item label to delete a profile
+			deleteItem = menu.Append(wx.ID_ANY, _("&Delete"))
+			self.Bind(wx.EVT_MENU, self.onChangeState, stateItem)
+			self.Bind(wx.EVT_MENU, self.onRename, renameItem)
+			self.Bind(wx.EVT_MENU, self.onDelete, deleteItem)
+		self.PopupMenu(menu)
+		menu.Destroy()
 
 	def onChangeState(self, evt):
 		sel = self.profileList.Selection
