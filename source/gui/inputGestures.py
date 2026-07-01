@@ -605,6 +605,7 @@ class InputGesturesDialog(SettingsDialog):
 		self.gesturesVM = _InputGesturesViewModel()
 		tree = self.tree = _GesturesTree(self, self.gesturesVM)
 		tree.Bind(wx.EVT_TREE_SEL_CHANGED, self.onTreeSelect)
+		tree.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
 		tree.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu)
 		tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.onContextMenu)
 		settingsSizer.Add(tree, proportion=1, flag=wx.EXPAND)
@@ -631,6 +632,20 @@ class InputGesturesDialog(SettingsDialog):
 
 		settingsSizer.Add(bHelper.sizer, flag=wx.EXPAND)
 		self.tree.Bind(wx.EVT_WINDOW_DESTROY, self._onDestroyTree)
+
+	def onCharHook(self, evt):
+		selectedItems = self.tree.getSelectedItemData()
+		key = evt.GetKeyCode()
+		if selectedItems is None:
+			item = None
+		else:
+			# get the leaf of the selection
+			item = next((item for item in reversed(selectedItems) if item is not None), None)
+		pendingAdd = self.gesturesVM.isExpectingNewEmuGesture or self.gesturesVM.isExpectingNewGesture
+		if item and not pendingAdd:
+			if key == wx.WXK_DELETE and item.canRemove:
+				self.onRemove(None)
+		evt.Skip()
 
 	def onContextMenu(self, evt):
 		selectedItems = self.tree.getSelectedItemData()
