@@ -54,6 +54,7 @@ class ProfilesDialog(
 		self.bindHelpEvent("ProfilesBasicManagement", self.profileList)
 		item.Bind(wx.EVT_LISTBOX, self.onProfileListChoice)
 		self.profileList.Bind(wx.EVT_CONTEXT_MENU, self.onContextMenu)
+		self.profileList.Bind(wx.EVT_CHAR_HOOK, self.onCharHook)
 		item.Selection = self.profileNames.index(config.conf.profiles[-1].name)
 		changeProfilesSizer.Add(item, proportion=1)
 
@@ -166,6 +167,16 @@ class ProfilesDialog(
 		except KeyError:
 			return False
 		return profile.manual
+
+	def onCharHook(self, evt):
+		key = evt.GetKeyCode()
+		sel = self.profileList.Selection
+		if key == wx.WXK_F2 and sel > 0:
+			self.onRename(None)
+		elif key == wx.WXK_DELETE and sel > 0:
+			self.onDelete(None)
+		else:
+			evt.Skip()
 
 	def onContextMenu(self, evt):
 		menu = wx.Menu()
